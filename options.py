@@ -20,12 +20,10 @@ class OptionAgent:
         return self.current_option.policy(state)
 
 
-# Example usage
 env = gym.make('CartPole-v1', render_mode="rgb_array")
-options = [
-    Option(lambda s: 1 if s[2] < 0 else 0, lambda s: s[2] >= 0, 0),
-    Option(lambda s: 1 if s[2] >= 0 else 0, lambda s: s[2] < 0, 1)
-]
+options = [Option(lambda s: 1 if s[2] < 0 else 0, lambda s: s[2] >= 0, 0),
+           Option(lambda s: 1 if s[2] >= 0 else 0, lambda s: s[2] < 0, 1)]
+
 agent = OptionAgent(options)
 for i_episode in range(20):
     observation = env.reset()[0]
@@ -36,6 +34,6 @@ for i_episode in range(20):
         observation, reward, done, truncated, info = env.step(action)
 
         if done:
-            print("Episode finished after {} timesteps".format(t+1))
+            print(f'Episode finished after {t+1} steps')
             break
 env.close()

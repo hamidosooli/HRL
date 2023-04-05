@@ -1,9 +1,11 @@
 import gym
 
+
 class Skill:
     def __init__(self, policy, id):
         self.policy = policy
         self.id = id
+
 
 class CompositeTask:
     def __init__(self, skills, id):
@@ -17,6 +19,7 @@ class CompositeTask:
         skill = self.skills[self.subtask(state)]
         return skill.policy(state)
 
+
 class CartPoleTask(CompositeTask):
     def __init__(self, skills, id):
         super().__init__(skills, id)
@@ -26,6 +29,7 @@ class CartPoleTask(CompositeTask):
             return 0
         else:
             return 1
+
 
 class MAXQAgent:
     def __init__(self, tasks, root):
@@ -39,15 +43,10 @@ class MAXQAgent:
 
         return self.current_task.policy(state)
 
-# Example usage
+
 env = gym.make('CartPole-v1', render_mode="rgb_array")
-skills = [
-    Skill(lambda s: 1, 0),
-    Skill(lambda s: 0, 1),
-]
-tasks = [
-    CartPoleTask(skills, 0)
-]
+skills = [Skill(lambda s: 1, 0), Skill(lambda s: 0, 1)]
+tasks = [CartPoleTask(skills, 0)]
 agent = MAXQAgent(tasks, tasks[0])
 
 for i_episode in range(20):
@@ -59,7 +58,7 @@ for i_episode in range(20):
         observation, reward, done, truncated, info = env.step(action)
 
         if done:
-            print("Episode finished after {} timesteps".format(t+1))
+            print(f'Episode finished after {t+1} steps')
             agent.current_task = tasks[0]
             break
 

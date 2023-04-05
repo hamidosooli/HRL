@@ -1,5 +1,5 @@
-import numpy as np
 import gym
+
 
 class AbstractMachine:
     def __init__(self, inputs, outputs):
@@ -9,6 +9,7 @@ class AbstractMachine:
     def step(self, inputs):
         raise NotImplementedError
 
+
 class PrimitiveMachine(AbstractMachine):
     def __init__(self, policy):
         super().__init__([1], [1])
@@ -16,6 +17,7 @@ class PrimitiveMachine(AbstractMachine):
 
     def step(self, inputs):
         return [self.policy(inputs[0])]
+
 
 class CompositeMachine(AbstractMachine):
     def __init__(self, submachines, transition):
@@ -29,12 +31,14 @@ class CompositeMachine(AbstractMachine):
         submachine_outputs = [submachine.step(inputs) for submachine in self.submachines]
         return self.transition(submachine_outputs)
 
+
 class CartPoleMachine(CompositeMachine):
     def __init__(self):
         skill_0 = PrimitiveMachine(lambda s: 1 if s[2] < 0 else 0)
         skill_1 = PrimitiveMachine(lambda s: 1 if s[2] >= 0 else 0)
         skills = [skill_0, skill_1]
         super().__init__(skills, lambda submachine_outputs: submachine_outputs[0] if submachine_outputs[1][0] == 0 else submachine_outputs[1])
+
 
 class HAMAgent:
     def __init__(self, machine):
@@ -43,7 +47,7 @@ class HAMAgent:
     def act(self, state):
         return self.machine.step([state])
 
-# Example usage
+
 env = gym.make('CartPole-v1', render_mode="rgb_array")
 machine = CartPoleMachine()
 agent = HAMAgent(machine)
@@ -57,7 +61,7 @@ for i_episode in range(20):
         observation, reward, done, truncated, info = env.step(action[0])
 
         if done:
-            print("Episode finished after {} timesteps".format(t+1))
+            print(f'Episode finished after {t+1} steps')
             break
 
 env.close()
